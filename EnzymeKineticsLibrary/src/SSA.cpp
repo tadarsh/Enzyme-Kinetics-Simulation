@@ -162,7 +162,7 @@ pair<T, T> SSA<T>::Simulation_Km_Vmax(int e0, T k1f, T k1b, T k2)
     
     vector<T> v_inv;
     vector<T> s0_inv;
-    for (int s0 = 100; s0 <= 1000; s0 = s0 + 20)
+    for (int s0 = 500; s0 <= 10000; s0 = s0 + 20)
     {
         /**
          * Running the simulation a hundred times to
