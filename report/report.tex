@@ -1,0 +1,475 @@
+\documentclass{article}
+
+\usepackage{fancyhdr}
+\usepackage{extramarks}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usepackage{algpseudocode}
+\usepackage{hyperref}
+\usepackage{algorithm}
+\usepackage[shortlabels]{enumitem}
+\usetikzlibrary{automata,positioning}
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+%
+% Basic Document Settings
+%
+
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\linespread{1.1}
+
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName}
+
+\rhead{BT6090}
+\lfoot{\lastxmark}
+\cfoot{\thepage}
+
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+\setlength\parindent{0pt}
+
+%
+% Create Problem Sections
+%
+
+\newcommand{\enterProblemHeader}[1]{
+    \nobreak\extramarks{}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+    \nobreak\extramarks{Problem \arabic{#1} (continued)}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+}
+
+\newcommand{\exitProblemHeader}[1]{
+    \nobreak\extramarks{Problem \arabic{#1} (continued)}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+    \stepcounter{#1}
+    \nobreak\extramarks{Problem \arabic{#1}}{}\nobreak{}
+}
+
+\setcounter{secnumdepth}{0}
+\newcounter{partCounter}
+\newcounter{homeworkProblemCounter}
+\setcounter{homeworkProblemCounter}{1}
+\nobreak\extramarks{Problem \arabic{homeworkProblemCounter}}{}\nobreak{}
+
+%
+% Homework Problem Environment
+%
+% This environment takes an optional argument. When given, it will adjust the
+% problem counter. This is useful for when the problems given for your
+% assignment aren't sequential. See the last 3 problems of this template for an
+% example.
+%
+\newenvironment{homeworkProblem}[1][-1]{
+    \ifnum#1>0
+        \setcounter{homeworkProblemCounter}{#1}
+    \fi
+    \section{Problem \arabic{homeworkProblemCounter}}
+    \setcounter{partCounter}{1}
+    \enterProblemHeader{homeworkProblemCounter}
+}{
+    \exitProblemHeader{homeworkProblemCounter}
+}
+
+%
+% Homework Details
+%   - Title
+%   - Due date
+%   - Class
+%   - Section/Time
+%   - Instructor
+%   - Author
+%
+
+\newcommand{\hmwkTitle}{Analysis of DNA String Searching Algorithms}
+\newcommand{\hmwkDueDate}{October 28, 2014}
+\newcommand{\hmwkClass}{Introduction to Bioinformatics}
+\newcommand{\hmwkClassTime}{}
+\newcommand{\hmwkClassInstructor}{Dr. Rajamanickam Murugan}
+\newcommand{\hmwkAuthorName}{Adarsh A Tadimari EE12B003}
+
+%
+% Title Page
+%
+
+\title{
+    \vspace{2in}
+    \textmd{\textbf{\hmwkClass}}\\
+    \textmd{\textbf{\hmwkTitle}}\\
+    \normalsize\vspace{0.1in}\small{Submitted\ on\ \hmwkDueDate}\\
+    \vspace{0.1in}\large{\textit{\hmwkClassInstructor\ \hmwkClassTime}}
+    \vspace{3in}
+}
+
+\author{\textbf{\hmwkAuthorName}}
+\date{}
+
+\renewcommand{\part}[1]{\textbf{\large Part \Alph{partCounter}}\stepcounter{partCounter}\\}
+
+%
+% Various Helper Commands
+%
+
+% Useful for algorithms
+\newcommand{\alg}[1]{\textsc{\bfseries \footnotesize #1}}
+
+% For derivatives
+\newcommand{\deriv}[1]{\frac{\mathrm{d}}{\mathrm{d}x} (#1)}
+
+% For partial derivatives
+\newcommand{\pderiv}[2]{\frac{\partial}{\partial #1} (#2)}
+
+% Integral dx
+\newcommand{\dx}{\mathrm{d}x}
+
+% Alias for the Solution section header
+\newcommand{\solution}{\textbf{\large Solution}}
+
+% Probability commands: Expectation, Variance, Covariance, Bias
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Bias}{\mathrm{Bias}}
+
+\begin{document}
+
+\maketitle
+
+\pagebreak
+
+\section{Introduction}
+
+The following document analyzes three different algorithms for substring search in a large string which is a DNA sequence in this case.
+\begin{enumerate}
+	\item Naive Search
+	\item Knuth-Morris-Pratt Algorithm
+	\item Boyer-Moore Algorithm
+\end{enumerate}
+
+The algorithms have been explained and their performance on DNA data sets of different lengths have been reported. The source code for all the algorithms have been implemented in C++ by the author and are made available for evaluation at \url{https://github.com/tadarsh/Acad/tree/master/BT6090/DNA} 
+
+A DNA string search library was created, which has functions to generate random DNA sequence, Naive Search, Boyer-Moore Search and Knuth-Morris-Pratt Search algorithms for use.
+
+\subsection{Performance Measurement}
+
+Two approaches have been taken to measure the performance of each algorithm.
+
+\begin{enumerate}
+	\item Number of Iterations
+	\item No of clock cycles (or) the time taken
+\end{enumerate}
+
+The above approaches do not include the operations/time taken to load the data set.
+
+\section{Na\"ive Search}
+
+Na\"ive Search is a brute force method of searching for a substring in a large string. 
+
+\subsection{Algorithm}
+
+Consider the sequence S[1...n] and the pattern P[1....m]
+
+\begin{algorithm}
+\caption{Na\"ive Search}\label{euclid}
+\begin{algorithmic}[1]
+\Procedure{Na\"ive}{}
+\State $i \gets 0$
+\BState \emph{loop}:
+\If {$S[i....i+m-1] = P[1...m]$}
+\State \textbf{match}
+\EndIf
+\State $i \gets i + 1$
+\If {$i = n - m +2 $}
+\State \textbf{close}
+\EndIf
+\State \textbf{goto} \emph{loop}.
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+\clearpage
+\subsection{Performance}
+\subsubsection{Time}
+The average time was calculated for DNA sequence of lengths ranging from 1 million to 1 billion and averaged over pattern length varying from 10 to 100.
+\noindent \begin{center}
+\begin{tabular}{|c|c|}
+\hline 
+DNA Sequence Length & Time taken(ms)\tabularnewline
+\hline 
+\hline 
+1 million & 34.68\tabularnewline
+\hline 
+10 million & 285.71\tabularnewline
+\hline 
+100 million & 2962.60\tabularnewline
+\hline 
+1000 million & 40222.20\tabularnewline
+\hline 
+\end{tabular}
+\par\end{center}
+
+\subsection{Iterations}
+The number of iterations were calculated for DNA sequence of lengths ranging from 1 million to 1 billion and averaged over pattern length varying from 10 to 100.
+\noindent \begin{center}
+\begin{tabular}{|c|c|}
+\hline 
+DNA Sequence Length & Iterations\tabularnewline
+\hline 
+\hline 
+1 million & 1332809\tabularnewline
+\hline 
+10 million & 13332425\tabularnewline
+\hline 
+100 million & 133331452\tabularnewline
+\hline 
+1000 million & 1333378007\tabularnewline
+\hline 
+\end{tabular}
+\par\end{center}
+
+
+\subsection{Complexity}
+Na\"ive search has a worst case complexity of \textbf{O((n - m)m)}, where n is the length of the sequence and m is the length of the pattern.
+
+\section{Knuth-Morris-Pratt algorithm}
+
+The Knuth-Morris-Pratt (KMP) algorithm takes into account the degenerating property of the pattern, i.e there might be sub-patterns appearing more than once in the pattern. The KMP algorithm is a linear time algorithm but includes a preprocessing stage which is also linear with the size of the pattern.
+
+\subsection{Algorithm}
+\subsubsection{Preprocessing Stage}
+Using the pattern we build an auxiliary array which contains information about the longest proper prefix (LPP) of the substring which is also a suffix.
+
+Consider the following examples,
+\begin{enumerate}[itemsep=0.1\baselineskip]
+	\item Pattern "ATGAGATG" , LPP = [0, 0, 0, 1, 0, 1, 2, 3]
+	\item Pattern "AAAGAAAG" , LPP = [0, 1, 2, 0, 1, 2, 3, 4]
+\end{enumerate}
+
+The algorithm has been presented in the following page.
+\begin{algorithm}
+\caption{KMP Algorithm}\label{euclid}
+\begin{algorithmic}[1]
+\Procedure{KMP Preprocessing}{}
+\State $i \gets 1$
+\State $lenp \gets 0$
+\State $LPP[0] \gets 0$
+\State $M \gets length of the pattern$
+
+\While{$i < M$} 
+	\If{$Pattern[i] = Pattern[lenp]$}
+		\State $lenp \gets lenp + 1$
+		\State $LPP[i] \gets lenp$
+		\State $i \gets i + 1$
+	\Else
+		\If{$lenp \neq 0$}
+			\State $lenp = LPP[lenp - 1]$
+		\Else
+			\State $LPS[i] \gets 0$
+			\State $i \gets i + 1$
+		\EndIf
+	\EndIf
+\EndWhile
+\EndProcedure
+\Procedure{Find Matches}{}
+\State $M \gets length of pattern$
+\State $N \gets length of subsequence$
+\State $j \gets 0$
+\State $i \gets 0$
+
+\While{$i < N$} 
+	\If{$Pattern[j] = Sequence[lenp]$}
+		\State $j \gets j + 1$
+		\State $i \gets i + 1$
+	\EndIf	
+	\If{$j = M$}
+		\State Match found
+		\State $j \gets LPP[j-1]$
+	\Else
+		\If{$Pattern[j] \neq Sequence[i]$}
+			\State $j \gets LPS[j-1]$
+			\State $i \gets i + 1$
+		\EndIf
+	\EndIf
+\EndWhile
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+\clearpage
+\subsection{Performance}
+\subsubsection{Time}
+The average time was calculated for DNA sequence of lengths ranging from 1 million to 1 billion and averaged over pattern length varying from 10 to 100.
+\noindent \begin{center}
+\begin{tabular}{|c|c|}
+\hline 
+DNA Sequence Length & Time taken (ms)\tabularnewline
+\hline 
+\hline 
+1 million & 33.3150\tabularnewline
+\hline 
+10 million & 265.1308\tabularnewline
+\hline 
+100 million & 2523.4023\tabularnewline
+\hline 
+1000 million & 32104.2034\tabularnewline
+\hline 
+\end{tabular}
+\par\end{center}
+\subsubsection{Iterations}
+The number of iterations were calculated for DNA sequence of lengths ranging from 1 million to 1 billion and averaged over pattern length varying from 10 to 100.
+\noindent \begin{center}
+\begin{tabular}{|c|c|}
+\hline 
+DNA Sequence Length & Iterations\tabularnewline
+\hline 
+\hline 
+1 million & 1031907\tabularnewline
+\hline 
+10 million & 10317640\tabularnewline
+\hline 
+100 million & 103171564\tabularnewline
+\hline 
+1000 million & 1031738910\tabularnewline
+\hline 
+\end{tabular}
+\par\end{center}
+
+\subsection{Complexity}
+The algorithm has best case and worst case complexity of O(n)
+
+\subsection{Conclusions}
+Knuth-Morris-Pratt algorithm performs slightly better than Na\"ive search but the best case performance is not very good.
+
+\section{Boyer-Moore Algorithm}
+Boyer-Moore algorithm is an efficient string searching algorithm. Similar to the Knuth-Morris-Pratt algorithm, it preprocesses the the pattern and not the sequence. Unlike the above two algorithms, Boyer-Moore algorithm searches for mismatch from the end of the string.
+
+\subsection{Algorithm}
+\subsubsection{Preprocessing Stage}
+Using the pattern, we build a table which will help us find number of steps to be skipped efficiently.
+
+For example, consider the pattern "ATCGAT". The table we build will have four rows corresponding to each of the bases A, T, C, G. The number of columns will be the number of elements in the pattern. Entry in $i$th row and $j$ column will represent the shift in the pattern needed to reach base pair $i$ next.
+
+$n$ corresponds to the case where there the particular base pair is missing to the left of the given index from the end.
+
+
+In the given example, the table will be the following. 
+\noindent \begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline 
+A & 1 & 0 & 3 & 2 & 1 & 0\tabularnewline
+\hline 
+T & 0 & 3 & 2 & 1 & 0 & n\tabularnewline
+\hline 
+C & 3 & 2 & 1 & 0 & n & n\tabularnewline
+\hline 
+G & 2 & 1 & 0 & n & n & n\tabularnewline
+\hline 
+\end{tabular}
+\par\end{center}
+
+\textbf{Explanation for the first row}: The first entry 1 represents the position of A with respect to the last element, the second entry corresponds to the position of A with respect to the second last element and so on.
+
+
+\begin{algorithm}
+\caption{Boyer-Moore Algorithm}\label{euclid}
+\begin{algorithmic}[1]
+\Procedure{Boyer-Moore Match Search}{}
+\State $i \gets 0$
+\State $N \gets length of sequence$
+\State $M \gets length of pattern$
+\While{$i \leq N - M$}
+	\State $j \gets M - 1$
+	\While{$j \geq 0$}
+		\If{$Pattern[j] = Sequence[i + j]$}
+			\If{$j = 0$}
+				\State Match found
+				\State $i \gets i + 1$			
+			\EndIf
+  		\Else
+  			\If{$Table[sequence[i + j]][M-j-1] \neq n$}
+  				\State $i \gets i + Table[sequence[i + j]][M-j-1]$
+  			\Else
+  				\State $i gets i + j + 1$
+  			\EndIf
+		\EndIf	
+		\State $j \gets j - 1$	
+	\EndWhile
+\EndWhile
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+\subsection{Performance}
+\subsubsection{Time}
+The average time was calculated for DNA sequence of lengths ranging from 1 million to 1 billion and averaged over pattern length varying from 10 to 100.
+\noindent \begin{center}
+\begin{tabular}{|c|c|}
+\hline 
+DNA Sequence Length & Time taken (ms)\tabularnewline
+\hline 
+\hline 
+1 million & 19.4802\tabularnewline
+\hline 
+10 million & 185.9633\tabularnewline
+\hline 
+100 million & 1868.2345\tabularnewline
+\hline 
+1000 million & 18528.2145\tabularnewline
+\hline 
+\end{tabular}
+\par\end{center}
+\clearpage
+\subsubsection{Iterations}
+The number of iterations were calculated for DNA sequence of lengths ranging from 1 million to 1 billion and averaged over pattern length varying from 10 to 100.
+\noindent \begin{center}
+\begin{tabular}{|c|c|}
+\hline 
+DNA Sequence Length & Iterations\tabularnewline
+\hline 
+\hline 
+1 million & 376641\tabularnewline
+\hline 
+10 million & 3767363\tabularnewline
+\hline 
+100 million & 37645963\tabularnewline
+\hline 
+1000 million & 376414095\tabularnewline
+\hline 
+\end{tabular}
+\par\end{center}
+
+\subsection{Complexity}
+Boyer-Moore algorithm has a complexity of O(n). In the best case, only one in m (size of pattern) needs to be checked which reduces the complexity to O(n/m). It works better with larger m.
+
+\section{Conclusion}
+Through implementation and testing of the above algorithms, it was found that in most of the cases Boyer-Moore performs almost thrice as fast as the Na\"ive implementation of string search and twice as fast Knuth-Morris-Pratt Algorithm.
+
+
+\begin{thebibliography}{9}
+
+\bibitem{wiki}
+  Wikipedia Article on Boyer-Moore Algorithm,
+  
+  \url{http://en.wikipedia.org/wiki/Boyer-Moore_string_search_algorithm}  
+  
+\bibitem{wiki2}
+  Wikipedia Article on Knuth-Morris-Pratt Algorithm,
+ 
+  \url{http://en.wikipedia.org/wiki/Knuth-Morris-Pratt_algorithm}  
+  
+\bibitem{notes}
+  BT6090 Class Notes on String Search	
+\end{thebibliography}
+
+
+
+
+ 
+
+\end{document}
